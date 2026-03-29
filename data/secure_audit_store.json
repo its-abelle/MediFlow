@@ -136,5 +136,152 @@
             "timestamp": "2026-03-29T12:13:46.974340",
             "blockchain_tx": "8ebae8290c3541f105dd49cadbb4a945ba75c4e09c5659d54acc872f71ac46a7"
         }
+    },
+    {
+        "prediction_id": "c1561e56-84e1-41a0-b836-10cdbda834e9",
+        "patient_id": "PT-9715",
+        "ai_hash": "2896e2bd4f16ab91f35dbdceae3c04b4aee920235bb570b07f46e54bc6238d9a",
+        "raw_data": {
+            "prediction_id": "c1561e56-84e1-41a0-b836-10cdbda834e9",
+            "patient_id": "PT-9715",
+            "risk_level": "LOW",
+            "confidence": 0.6,
+            "timestamp": "2026-03-29T12:20:56.470153",
+            "input_features": {
+                "patient_id": "PT-9715",
+                "age": 1,
+                "fever_duration_days": 7,
+                "cough_duration_days": 28,
+                "weight_loss_kg": 10.6,
+                "night_sweats": 1,
+                "hemoptysis": 0
+            }
+        },
+        "ai_result": {
+            "risk_level": "LOW",
+            "confidence": "60.00%",
+            "risk_score": 0.47,
+            "methodology": "Rule-Based (3 factors)",
+            "reasoning": "Persistent cough (28 days), Night sweats, Weight loss (10.6kg)",
+            "recommendation": "Monitor for symptom progression"
+        },
+        "blockchain_tx": "33a547cb97c8926a094920f0b84b8c255dedf3498cab35115fdad977690cc1c7",
+        "validation": {
+            "doctor_id": "DOC001",
+            "doctor_name": "Dr. Amina Nakasone",
+            "decision": "OVERRIDDEN",
+            "override_reason": "Not enough data to diagonise, go for CT scan",
+            "signature": "2d858165190b3b6f7c4606c62735f7a9cfd6264c7eb46656fc763e0ffdc0ea68",
+            "timestamp": "2026-03-29T12:21:49.500164",
+            "blockchain_tx": "30bc018837958661fe19a5b367bd5de2bb36ddd2b959b1225329870dd7b6e756"
+        }
+    },
+    {
+        "prediction_id": "e11034a9-c061-4b06-ae06-75db04133587",
+        "patient_id": "PT-7881",
+        "ai_hash": "6c2cdf5d7a491f6246bfd7ab1e627db8df91f4536ccdd7835281dcd635c4f5be",
+        "raw_data": {
+            "prediction_id": "e11034a9-c061-4b06-ae06-75db04133587",
+            "patient_id": "PT-7881",
+            "risk_level": "HIGH",
+            "confidence": 0.95,
+            "timestamp": "2026-03-29T12:24:05.045385",
+            "input_features": {
+                "patient_id": "PT-7881",
+                "age": 59,
+                "fever_duration_days": 7,
+                "cough_duration_days": 35,
+                "weight_loss_kg": 3.7,
+                "night_sweats": 1,
+                "hemoptysis": 1
+            }
+        },
+        "ai_result": {
+            "risk_level": "HIGH",
+            "confidence": "95.00%",
+            "risk_score": 0.95,
+            "methodology": "Rule-Based (Hemoptysis)",
+            "reasoning": "Hemoptysis is a strong TB indicator.",
+            "recommendation": "Urgent TB testing required."
+        },
+        "blockchain_tx": "6202e26d5ca74d59edfb80769924b298830e9044129b0541889d62805bf1780f",
+        "validation": {
+            "doctor_id": "DOC001",
+            "doctor_name": "Dr. Amina Nakasone",
+            "decision": "OVERRIDDEN",
+            "override_reason": "More tests needed to verify",
+            "signature": "3a2503ad8e85dead949c6c172f8f126ca65975470b0f590186625214fb62b0b4",
+            "timestamp": "2026-03-29T12:24:30.645917",
+            "blockchain_tx": "8f76b150b088310c1591af87862d21eaf1ff12b366ad948049d1a511578f2849"
+        }
+    },
+    {
+        "prediction_id": "8891611e-ef10-474c-bd2f-b6180c5bcdcc",
+        "patient_id": "PT-7881",
+        "ai_hash": "b6a79f5a330f5d0ba1df6e99eaba9a23b467da141ea4d35ccb76ffe752fb70a6",
+        "raw_data": {
+            "prediction_id": "8891611e-ef10-474c-bd2f-b6180c5bcdcc",
+            "patient_id": "PT-7881",
+            "risk_level": "LOW",
+            "confidence": 0.6,
+            "timestamp": "2026-03-29T12:25:59.496153",
+            "input_features": {
+                "patient_id": "PT-7881",
+                "age": 59,
+                "fever_duration_days": 7,
+                "cough_duration_days": 35,
+                "weight_loss_kg": 3.7,
+                "night_sweats": 1,
+                "hemoptysis": 0
+            }
+        },
+        "ai_result": {
+            "risk_level": "LOW",
+            "confidence": "60.00%",
+            "risk_score": 0.37,
+            "methodology": "Rule-Based (2 factors)",
+            "reasoning": "Persistent cough (35 days), Night sweats",
+            "recommendation": "Monitor for symptom progression"
+        },
+        "blockchain_tx": "e133f33bf3a12fe59479ec4d44809e6f2dfc9946be78256b560ad129e0b47f43"
+    },
+    {
+        "prediction_id": "ed01368e-db5d-457a-b201-3619fdb9a9b9",
+        "patient_id": "PT-4563",
+        "ai_hash": "4f78cdf8292953a3b4915a7d5a676cf90e5a7d03f65313fce49c49463e22353a",
+        "raw_data": {
+            "prediction_id": "ed01368e-db5d-457a-b201-3619fdb9a9b9",
+            "patient_id": "PT-4563",
+            "risk_level": "HIGH",
+            "confidence": 0.95,
+            "timestamp": "2026-03-29T13:14:32.952223",
+            "input_features": {
+                "patient_id": "PT-4563",
+                "age": 77,
+                "fever_duration_days": 7,
+                "cough_duration_days": 26,
+                "weight_loss_kg": 8.5,
+                "night_sweats": 1,
+                "hemoptysis": 1
+            }
+        },
+        "ai_result": {
+            "risk_level": "HIGH",
+            "confidence": "95.00%",
+            "risk_score": 0.95,
+            "methodology": "Rule-Based (Hemoptysis)",
+            "reasoning": "Hemoptysis is a strong TB indicator.",
+            "recommendation": "Urgent TB testing required."
+        },
+        "blockchain_tx": null,
+        "validation": {
+            "doctor_id": "DOC001",
+            "doctor_name": "Dr. Amina Nakasone",
+            "decision": "APPROVED",
+            "override_reason": null,
+            "signature": "ce10c8e4e66abfa5581df7b59776069320d88ee6883c4bf5d524d902bdc8738f",
+            "timestamp": "2026-03-29T13:14:35.473111",
+            "blockchain_tx": null
+        }
     }
 ]
