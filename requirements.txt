@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+joblib
+pandas
+numpy
+web3
+pydantic
+pydantic-settings
+python-dotenv

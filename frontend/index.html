@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediFlow | AI & Blockchain TB Diagnostic</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 { color: var(--primary); margin: 0; }
+        .subtitle { color: #64748b; font-size: 0.9rem; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 10px;
+        }
+
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
+        button:disabled { background: #94a3b8; cursor: not-allowed; }
+
+        .result-box {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+            background: #f1f5f9;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .badge-high { background: #fee2e2; color: #991b1b; }
+        .badge-medium { background: #fef3c7; color: #92400e; }
+        .badge-low { background: #d1fae5; color: #065f46; }
+
+        .hash-tag {
+            font-family: monospace;
+            background: #1e293b;
+            color: #38bdf8;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            word-break: break-all;
+            margin-top: 10px;
+        }
+
+        .blockchain-log {
+            font-family: monospace;
+            font-size: 0.75rem;
+            background: #0f172a;
+            color: #10b981;
+            padding: 15px;
+            border-radius: 8px;
+            height: 150px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        .step-indicator {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            line-height: 24px;
+            font-size: 0.8rem;
+            margin-right: 10px;
+        }
+
+        #doctor-portal { opacity: 0.5; pointer-events: none; transition: 0.3s; }
+        #doctor-portal.active { opacity: 1; pointer-events: auto; }
+
+        /* Audit Table Styles */
+        .audit-item {
+            border-bottom: 1px solid #e2e8f0;
+            padding: 15px 0;
+        }
+        .audit-item:last-child { border-bottom: none; }
+        .audit-meta { font-size: 0.75rem; color: #64748b; margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1><i class="fa-solid fa-microscope"></i> MediFlow</h1>
+        <div class="subtitle">AI & Blockchain Clinical Integrity Dashboard</div>
+    </header>
+
+    <div class="dashboard-grid">
+        <!-- STEP 1: PATIENT TRIAGE -->
+        <div class="card">
+            <div class="card-header">
+                <span class="step-indicator">1</span>
+                Patient Input & AI Diagnosis
+            </div>
+            <form id="triage-form">
+                <div class="form-group">
+                    <label>Patient ID</label>
+                    <input type="text" id="patient_id" value="PT-2026-X89" required>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="form-group">
+                        <label>Age</label>
+                        <input type="number" id="age" value="45" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Weight Loss (kg)</label>
+                        <input type="number" step="0.1" id="weight_loss_kg" value="8.5" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Cough Duration (Days)</label>
+                    <input type="number" id="cough_duration_days" value="21" required>
+                </div>
+                <div class="form-group">
+                    <label>Hemoptysis (Coughing Blood)?</label>
+                    <select id="hemoptysis">
+                        <option value="1">Yes (High Risk Flag)</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
+                <button type="submit" id="triage-btn">Analyze Symptoms</button>
+            </form>
+
+            <div id="triage-result" class="result-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <strong>AI RISK LEVEL:</strong>
+                    <span id="risk-badge" class="badge"></span>
+                </div>
+                <p id="reasoning-text" style="font-size: 0.85rem; color: #475569;"></p>
+                <div style="font-size: 0.7rem; color: #64748b; margin-top: 15px;">DIAGNOSTIC HASH (CID):</div>
+                <div id="prediction-hash" class="hash-tag"></div>
+            </div>
+        </div>
+
+        <!-- STEP 2: DOCTOR VALIDATION -->
+        <div id="doctor-portal" class="card">
+            <div class="card-header">
+                <span class="step-indicator">2</span>
+                Blockchain Validation Station
+            </div>
+            <p style="font-size: 0.85rem; color: #64748b;">Review AI output and commit this record permanently to the ledger.</p>
+            
+            <div class="form-group">
+                <label>Doctor ID</label>
+                <input type="text" id="doctor_id" value="DOC001" readonly>
+            </div>
+            <div class="form-group">
+                <label>Final Decision</label>
+                <select id="doctor_decision">
+                    <option value="APPROVED">APPROVE AI Diagnosis</option>
+                    <option value="OVERRIDDEN">OVERRIDE (Clinical Judgment)</option>
+                </select>
+            </div>
+            <button id="validate-btn" onclick="validateOnBackend()" style="background: var(--success);">
+                <i class="fa-solid fa-file-signature"></i> Authorize & Record On-Chain
+            </button>
+
+            <div id="blockchain-section" style="display: none; margin-top: 20px;">
+                <div style="font-size: 0.8rem; font-weight: 700; color: var(--success);"><i class="fa-solid fa-circle-check"></i> TRANSACTION CONFIRMED</div>
+                <div id="tx-link" class="hash-tag" style="background: #065f46; color: #34d399;"></div>
+                <div class="blockchain-log" id="log"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACCOUNTABILITY SECTION (AUDIT TRAIL) -->
+    <div class="card" style="grid-column: span 2;">
+        <div class="card-header">
+            <i class="fa-solid fa-receipt" style="color: var(--warning);"></i>
+            Immutable Audit & Accountability Trail
+        </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <input type="text" id="audit_patient_id" placeholder="Enter Patient ID to verify..." style="flex-grow: 1;">
+            <button onclick="fetchAuditTrail()" style="width: auto; padding: 0 30px; background: var(--warning);">
+                Fetch Audit Trail
+            </button>
+        </div>
+        <div id="audit-results" style="min-height: 100px;">
+            <p style="text-align: center; color: #94a3b8; font-style: italic;">No audit requested. Enter a Patient ID above to retrieve history from blockchain.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentPrediction = null;
+    const API_BASE = "http://localhost:8000/api/v1";
+
+    function log(msg) {
+        const logBox = document.getElementById('log');
+        logBox.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}<br>`;
+        logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    document.getElementById('triage-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('triage-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AI Processing...';
+
+        const data = {
+            patient_id: document.getElementById('patient_id').value,
+            age: parseInt(document.getElementById('age').value),
+            fever_duration_days: 7,
+            cough_duration_days: parseInt(document.getElementById('cough_duration_days').value),
+            weight_loss_kg: parseFloat(document.getElementById('weight_loss_kg').value),
+            night_sweats: 1,
+            hemoptysis: parseInt(document.getElementById('hemoptysis').value)
+        };
+
+        try {
+            const response = await fetch(`${API_BASE}/triage/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            currentPrediction = result;
+
+            document.getElementById('risk-badge').textContent = result.risk_level;
+            document.getElementById('risk-badge').className = `badge badge-${result.risk_level.toLowerCase()}`;
+            document.getElementById('reasoning-text').textContent = result.reasoning;
+            document.getElementById('prediction-hash').textContent = result.ai_prediction_hash;
+
+            document.getElementById('triage-result').style.display = 'block';
+            document.getElementById('doctor-portal').classList.add('active');
+            btn.disabled = false;
+            btn.textContent = "Analyze Symptoms";
+            log(`[AI] Diagnosis: ${result.risk_level} (${(result.confidence * 100).toFixed(1)}% confidence)`);
+        } catch (err) {
+            alert('Backend connection failed!');
+            btn.disabled = false;
+        }
+    });
+
+    async function validateOnBackend() {
+        const btn = document.getElementById('validate-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Committing to Ledger...';
+
+        try {
+            const validationData = {
+                doctor_id: document.getElementById('doctor_id').value,
+                doctor_name: "Dr. Amina Nakasone",
+                ai_prediction_id: currentPrediction.ai_prediction_id,
+                ai_prediction_hash: currentPrediction.ai_prediction_hash,
+                decision: document.getElementById('doctor_decision').value
+            };
+
+            const response = await fetch(`${API_BASE}/validate/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(validationData)
+            });
+            const result = await response.json();
+            
+            if (result.status === "success") {
+                document.getElementById('blockchain-section').style.display = 'block';
+                document.getElementById('tx-link').textContent = `TX HASH: ${result.blockchain_tx}`;
+                btn.innerHTML = '<i class="fas fa-check"></i> Recorded on Ledger';
+                btn.style.background = '#059669';
+                log(`[Success] Blockchain updated.`);
+            }
+        } catch (err) {
+            alert("Record commit failed.");
+            btn.disabled = false;
+        }
+    }
+
+    async function fetchAuditTrail() {
+        const patientId = document.getElementById('audit_patient_id').value;
+        const container = document.getElementById('audit-results');
+        
+        if (!patientId) return alert("Please enter a Patient ID");
+        
+        container.innerHTML = '<p style="text-align: center;"><i class="fas fa-spinner fa-spin"></i> Querying Blockchain...</p>';
+
+        try {
+            const response = await fetch(`${API_BASE}/audit/${patientId}`);
+            const data = await response.json();
+            
+            if (data.transactions.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--danger);">No records found for this ID.</p>';
+                return;
+            }
+
+            let html = `<div style="margin-bottom: 15px;"><strong>Found ${data.total_transactions} Total Event(s)</strong></div>`;
+            
+            data.transactions.forEach(tx => {
+                // Formatting based on mock vs real structure
+                const isReal = tx.prediction !== undefined;
+                const id = isReal ? tx.prediction.id : tx.prediction_id;
+                const hash = isReal ? tx.prediction.hash : tx.prediction_hash;
+                const timestamp = isReal ? new Date(tx.prediction.timestamp * 1000).toLocaleString() : tx.timestamp;
+                
+                html += `
+                    <div class="audit-item">
+                        <div class="audit-meta">
+                            <i class="fa-solid fa-clock"></i> ${timestamp} | 
+                            <i class="fa-solid fa-fingerprint"></i> ID: ${id}
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div style="font-size: 0.85rem; color: #1e293b; font-family: monospace; flex-grow: 1;">
+                                SHA256 Hash: ${hash}
+                            </div>
+                            <span class="badge badge-low" style="background: #e0f2fe; color: #0369a1;">On-Chain Verified</span>
+                        </div>
+                        ${isReal && tx.validation ? `
+                        <div style="margin-top: 10px; padding: 10px; background: #f0fdf4; border-radius: 6px; border-left: 3px solid var(--success);">
+                            <div style="font-size: 0.75rem; font-weight: 700; color: #166534;">DOCTOR SIGNATURE VERIFIED</div>
+                            <div style="font-size: 0.75rem; color: #15803d;">Decision: ${tx.validation.decision} | Signed By: ${tx.validation.doctor_address}</div>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        } catch (err) {
+            container.innerHTML = '<p style="text-align: center; color: var(--danger);">Audit retrieval failed.</p>';
+        }
+    }
+</script>
+
+</body>
+</html>
