@@ -1,66 +1,52 @@
-## Foundry
+# MediFlow Ledger | Smart Contracts
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+This directory contains the Ethereum-based accountability layer for the MediFlow TB Diagnostic system.
 
-Foundry consists of:
+## 🛠️ Tech Stack
+- **Solidity** (^0.8.19)
+- **Foundry** (Forge & Cast)
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+## 🚀 Quick Start for Judges
 
-## Documentation
-
-https://book.getfoundry.sh/
-
-## Usage
-
-### Build
-
-```shell
-$ forge build
+### 1. Install Foundry
+If you don't have Foundry installed, run:
+```bash
+curl -L https://foundry.paradigm.xyz | bash
+foundryup
 ```
 
-### Test
-
-```shell
-$ forge test
+### 2. Install Dependencies
+Install the standard library (Forge-std):
+```bash
+forge install
 ```
 
-### Format
-
-```shell
-$ forge fmt
+### 3. Compile Contracts
+Build the artifacts:
+```bash
+forge build
 ```
 
-### Gas Snapshots
-
-```shell
-$ forge snapshot
+### 4. Run Tests
+Verify the ledger logic:
+```bash
+forge test
 ```
 
-### Anvil
+## 🌐 Deployment (Local Anvil)
 
-```shell
-$ anvil
+To deploy the ledger to a local test node:
+
+1. **Start Anvil:**
+```bash
+anvil
 ```
 
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+2. **Deploy:**
+In a new terminal, run:
+```bash
+forge create src/MediFlow.sol:MediFlow --rpc-url http://127.0.0.1:8545 --interactive
 ```
 
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+---
+**Note:** After deployment, copy the `Deployed to:` address and update the `CONTRACT_ADDRESS` in the root `.env` file to enable backend integration.

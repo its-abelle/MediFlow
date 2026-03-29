@@ -1,5 +1,10 @@
 import os
 from typing import Dict, Optional
+from dotenv import load_dotenv
+
+# Load .env file if it exists
+load_dotenv()
+
 try:
     from pydantic_settings import BaseSettings
 except ImportError:
@@ -9,22 +14,20 @@ except ImportError:
                 setattr(self, k, v)
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "MediFlow Intelligence API"
+    PROJECT_NAME: str = os.getenv("PROJECT_NAME", "MediFlow Intelligence API")
     VERSION: str = "2.0"
-    DEBUG: bool = os.getenv("DEBUG", "True") == "True"
+    DEBUG: bool = os.getenv("DEBUG", "True").lower() == "true"
     
     # Paths
     BASE_DIR: str = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     ML_MODEL_PATH: str = os.getenv("ML_MODEL_PATH", os.path.join(BASE_DIR, "app/resources/models/rf_tb_model.pkl"))
     
-    # Blockchain settings (Anvil Defaults)
+    # Blockchain settings
     BLOCKCHAIN_PROVIDER_URL: str = os.getenv("BLOCKCHAIN_PROVIDER_URL", "http://127.0.0.1:8545")
-    # This should be updated after deployment
     CONTRACT_ADDRESS: Optional[str] = os.getenv("CONTRACT_ADDRESS") 
-    # Anvil's first default private key
     PRIVATE_KEY: str = os.getenv("PRIVATE_KEY", "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
     
-    # Doctor keys for HMAC signatures (Accountability Layer)
+    # Doctor keys for HMAC signatures
     DOCTOR_KEYS: Dict[str, str] = {
         'DOC001': os.getenv('DOC001_KEY', 'secret_key_doctor_amina_2024'),
         'DOC002': os.getenv('DOC002_KEY', 'secret_key_doctor_james_2024'),

@@ -1,0 +1,62 @@
+[
+    {
+        "prediction_id": "1a8dad97-bbe0-4438-8106-bd8103041085",
+        "patient_id": "PT-8311",
+        "ai_hash": "f8263d799d8cfe1fc4a691c6565e04491a2062e0bc6c607543023f95bd17a29c",
+        "raw_data": {
+            "prediction_id": "1a8dad97-bbe0-4438-8106-bd8103041085",
+            "patient_id": "PT-8311",
+            "risk_level": "HIGH",
+            "confidence": 0.8170151934317279,
+            "timestamp": "2026-03-29T11:08:50.258174",
+            "input_features": {
+                "patient_id": "PT-8311",
+                "age": 85,
+                "fever_duration_days": 7,
+                "cough_duration_days": 40,
+                "weight_loss_kg": 6.3,
+                "night_sweats": 1,
+                "hemoptysis": 0
+            }
+        },
+        "ai_result": {
+            "risk_level": "HIGH",
+            "confidence": "81.70%",
+            "risk_score": 0.817,
+            "methodology": "Random Forest ML Model",
+            "reasoning": "ML pattern identification.",
+            "recommendation": "Refer for testing"
+        },
+        "blockchain_tx": "ee9ea27554621d73ddaa26feceb946cb7c8b9398b4a20391b3ee47962a59129f"
+    },
+    {
+        "prediction_id": "bcc6a549-cf12-4ba5-8778-d35252c56b67",
+        "patient_id": "PT-8311",
+        "ai_hash": "3464815497cdeeb6fd2cf3d3e30f7ef7611ab0e371bb35cc4f25ce24b41cc002",
+        "raw_data": {
+            "prediction_id": "bcc6a549-cf12-4ba5-8778-d35252c56b67",
+            "patient_id": "PT-8311",
+            "risk_level": "HIGH",
+            "confidence": 0.8170151934317279,
+            "timestamp": "2026-03-29T11:09:54.830953",
+            "input_features": {
+                "patient_id": "PT-8311",
+                "age": 85,
+                "fever_duration_days": 7,
+                "cough_duration_days": 40,
+                "weight_loss_kg": 6.3,
+                "night_sweats": 1,
+                "hemoptysis": 0
+            }
+        },
+        "ai_result": {
+            "risk_level": "HIGH",
+            "confidence": "81.70%",
+            "risk_score": 0.817,
+            "methodology": "Random Forest ML Model",
+            "reasoning": "ML pattern identification.",
+            "recommendation": "Refer for testing"
+        },
+        "blockchain_tx": "8eb3a86b9117512ab815b9181425b88f916234967bfd3c4d44413dd492e21938"
+    }
+]

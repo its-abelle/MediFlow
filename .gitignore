@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.venv
+env/
+venv/
+build/
+dist/
+*.egg-info/
+
+# Foundry / Solidity
+blockchain/out/
+blockchain/cache/
+blockchain/lib/
+broadcast/
+
+# Data & Logs
+*.log
+data/tb_patients_data.csv
+# We keep doctors.json as a template, but usually .env is ignored
+# data/doctors.json 
+
+# OS
+.DS_Store
+Thumbs.db

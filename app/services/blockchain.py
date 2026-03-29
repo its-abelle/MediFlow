@@ -14,56 +14,43 @@ class MediFlowBlockchain:
         self.w3 = None
         self.contract = None
         self.account = None
-        self.mock_mode = True
-        self.chain = [] # For mock mode simulation
+        self.is_connected = False
 
-        if provider_url and contract_address:
-            try:
-                self.w3 = Web3(Web3.HTTPProvider(provider_url))
-                if self.w3.is_connected():
-                    # Load contract ABI from Foundry artifacts
-                    abi_path = "blockchain/out/MediFlow.sol/MediFlow.json"
-                    if os.path.exists(abi_path):
-                        with open(abi_path, "r") as f:
-                            contract_json = json.load(f)
-                            self.contract = self.w3.eth.contract(
-                                address=Web3.to_checksum_address(contract_address), 
-                                abi=contract_json["abi"]
-                            )
-                        
-                        if private_key:
-                            self.account = Account.from_key(private_key)
-                            self.mock_mode = False
-                            logger.info(f"Connected to blockchain at {provider_url}")
-                    else:
-                        logger.warning(f"ABI file not found at {abi_path}. Using mock mode.")
-                else:
-                    logger.warning("Blockchain provider not reachable. Using mock mode.")
-            except Exception as e:
-                logger.error(f"Blockchain init error: {e}. Falling back to mock mode.")
+        if not provider_url or not contract_address:
+            logger.warning("Blockchain configuration incomplete. System will run in READ-ONLY/MOCK mode.")
+            return
+
+        try:
+            self.w3 = Web3(Web3.HTTPProvider(provider_url))
+            if self.w3.is_connected():
+                abi_path = "blockchain/out/MediFlow.sol/MediFlow.json"
+                with open(abi_path, "r") as f:
+                    contract_json = json.load(f)
+                    self.contract = self.w3.eth.contract(
+                        address=Web3.to_checksum_address(contract_address), 
+                        abi=contract_json["abi"]
+                    )
+                
+                if private_key:
+                    self.account = Account.from_key(private_key)
+                    self.is_connected = True
+                    logger.info(f"✅ STRICT MODE: Connected to blockchain at {provider_url}")
+            else:
+                logger.error("❌ FAILED to connect to blockchain provider.")
+        except Exception as e:
+            logger.error(f"Blockchain connection error: {e}")
 
     def _get_patient_id_hash(self, patient_id: str) -> bytes:
         return hashlib.sha256(patient_id.encode()).digest()
 
     def record_ai_prediction(self, prediction_id: str, patient_id: str, prediction_hash: str) -> Dict:
+        if not self.is_connected:
+            return {"status": "error", "message": "Blockchain not connected. Strict mode enabled."}
+        
         patient_id_hash = self._get_patient_id_hash(patient_id)
         pred_hash_bytes = bytes.fromhex(prediction_hash)
 
-        if self.mock_mode:
-            logger.info(f"[Mock] Recording AI prediction {prediction_id}")
-            tx = {
-                "transaction_id": f"mock_tx_ai_{prediction_id[:8]}",
-                "prediction_id": prediction_id,
-                "patient_id_hash": patient_id_hash.hex(),
-                "prediction_hash": prediction_hash,
-                "timestamp": datetime.now().isoformat(),
-                "block_number": len(self.chain) + 1
-            }
-            self.chain.append(tx)
-            return tx
-        
         try:
-            # Build and send transaction
             nonce = self.w3.eth.get_transaction_count(self.account.address)
             tx_data = self.contract.functions.recordAIPrediction(
                 prediction_id,
@@ -83,16 +70,15 @@ class MediFlowBlockchain:
             return {
                 "transaction_hash": tx_hash.hex(),
                 "block_number": receipt.blockNumber,
-                "status": "success"
+                "status": "success",
+                "network": "live"
             }
         except Exception as e:
-            logger.error(f"On-chain AI record failed: {e}")
             return {"status": "error", "message": str(e)}
 
     def record_doctor_validation(self, validation_id: str, prediction_id: str, doctor_id: str, decision: str, signature: str) -> Dict:
-        if self.mock_mode:
-            logger.info(f"[Mock] Recording Doctor validation for {prediction_id}")
-            return {"status": "success", "message": "Mock validation recorded", "transaction_hash": f"mock_tx_val_{validation_id[:8]}"}
+        if not self.is_connected:
+            return {"status": "error", "message": "Blockchain not connected."}
 
         try:
             nonce = self.w3.eth.get_transaction_count(self.account.address)
@@ -116,18 +102,17 @@ class MediFlowBlockchain:
             return {
                 "transaction_hash": tx_hash.hex(),
                 "block_number": receipt.blockNumber,
-                "status": "success"
+                "status": "success",
+                "network": "live"
             }
         except Exception as e:
-            logger.error(f"On-chain validation record failed: {e}")
             return {"status": "error", "message": str(e)}
 
     def get_audit_trail(self, patient_id: str) -> List[Dict]:
+        if not self.is_connected:
+            return []
+            
         patient_id_hash = self._get_patient_id_hash(patient_id)
-        
-        if self.mock_mode:
-            return [tx for tx in self.chain if tx.get("patient_id_hash") == patient_id_hash.hex()]
-        
         try:
             prediction_ids = self.contract.functions.getPatientPredictions(patient_id_hash).call()
             trail = []
@@ -151,5 +136,5 @@ class MediFlowBlockchain:
                 })
             return trail
         except Exception as e:
-            logger.error(f"Failed to fetch audit trail: {e}")
+            logger.error(f"Audit trail failed: {e}")
             return []

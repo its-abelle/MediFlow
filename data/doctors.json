@@ -1,0 +1,17 @@
+[
+    {
+        "id": "DOC001",
+        "name": "Dr. Amina Nakasone",
+        "key": "secret_key_amina_2024"
+    },
+    {
+        "id": "DOC002",
+        "name": "Dr. James Mensah",
+        "key": "secret_key_james_2024"
+    },
+    {
+        "id": "DOC003",
+        "name": "Dr. Sarah Chen",
+        "key": "secret_key_sarah_2024"
+    }
+]

@@ -10,7 +10,7 @@ blockchain_service = MediFlowBlockchain(
     contract_address=settings.CONTRACT_ADDRESS,
     private_key=settings.PRIVATE_KEY
 )
-signature_validator = DoctorSignatureValidator(settings.DOCTOR_KEYS)
+signature_validator = DoctorSignatureValidator()
 
 def get_diagnostic_engine():
     return diagnostic_engine
