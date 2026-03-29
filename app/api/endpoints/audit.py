@@ -27,7 +27,6 @@ async def get_audit_trail(
         # 3. Merge Data
         transactions = []
         
-        # Map blockchain results for easy lookup
         bc_map = {}
         for item in blockchain_trail:
             bc_map[item['prediction']['id']] = item
@@ -36,6 +35,9 @@ async def get_audit_trail(
             pid = local['prediction_id']
             bc_data = bc_map.get(pid)
             
+            # Use local validation data if blockchain fetch is incomplete
+            local_validation = local.get('validation')
+            
             transactions.append({
                 "prediction_id": pid,
                 "timestamp": local['raw_data']['timestamp'],
@@ -43,19 +45,8 @@ async def get_audit_trail(
                 "risk_level": local['ai_result']['risk_level'],
                 "raw_features": local['raw_data']['input_features'],
                 "blockchain_verified": bc_data is not None,
-                "validation": bc_data['validation'] if bc_data else None
+                "validation": bc_data['validation'] if bc_data else local_validation
             })
-
-        # Fallback if blockchain is connected but local store is empty (unlikely in this flow)
-        if not transactions and blockchain_trail:
-            for item in blockchain_trail:
-                transactions.append({
-                    "prediction_id": item['prediction']['id'],
-                    "timestamp": "On-Chain Only",
-                    "ai_hash": item['prediction']['hash'],
-                    "blockchain_verified": True,
-                    "validation": item['validation']
-                })
 
         return {
             "patient_id": patient_id,

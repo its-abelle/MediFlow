@@ -58,5 +58,83 @@
             "recommendation": "Refer for testing"
         },
         "blockchain_tx": "8eb3a86b9117512ab815b9181425b88f916234967bfd3c4d44413dd492e21938"
+    },
+    {
+        "prediction_id": "f33f010e-dd9d-4c6b-911d-eb5ffe0c87b7",
+        "patient_id": "PT-1426",
+        "ai_hash": "068c5d9f0e776b7eb0efff5000b77bd86ac35404c91eb369b536414dd3fe23a8",
+        "raw_data": {
+            "prediction_id": "f33f010e-dd9d-4c6b-911d-eb5ffe0c87b7",
+            "patient_id": "PT-1426",
+            "risk_level": "LOW",
+            "confidence": 0.6,
+            "timestamp": "2026-03-29T12:12:35.588888",
+            "input_features": {
+                "patient_id": "PT-1426",
+                "age": 77,
+                "fever_duration_days": 7,
+                "cough_duration_days": 26,
+                "weight_loss_kg": 8.5,
+                "night_sweats": 1,
+                "hemoptysis": 0
+            }
+        },
+        "ai_result": {
+            "risk_level": "LOW",
+            "confidence": "60.00%",
+            "risk_score": 0.37,
+            "methodology": "Rule-Based (2 factors)",
+            "reasoning": "Persistent cough (26 days), Night sweats",
+            "recommendation": "Monitor for symptom progression"
+        },
+        "blockchain_tx": "830be52bd6135d1f11fd0a1daf04dbafdf31931010cb6a33f850fac1f510d2cc",
+        "validation": {
+            "doctor_id": "DOC001",
+            "doctor_name": "Dr. Amina Nakasone",
+            "decision": "OVERRIDDEN",
+            "override_reason": "More diagnosis is needed",
+            "signature": "b2754ccd9b91e91f0eff3fea3c3ab6e1d881e4839936c014888ef8dba6d4265c",
+            "timestamp": "2026-03-29T12:12:53.176760",
+            "blockchain_tx": "8bd430d5cee3dd38da3c7dcd098e32f6a26d1c221e70009071bfa83ad2e422c8"
+        }
+    },
+    {
+        "prediction_id": "1f3e51ec-419a-41db-bf03-488d80c6f9eb",
+        "patient_id": "PT-5750",
+        "ai_hash": "90379eec2c8423f5edb2cccfc7731581d4b1badde1cde1dbc087df959d9d8046",
+        "raw_data": {
+            "prediction_id": "1f3e51ec-419a-41db-bf03-488d80c6f9eb",
+            "patient_id": "PT-5750",
+            "risk_level": "HIGH",
+            "confidence": 0.7712673307173031,
+            "timestamp": "2026-03-29T12:13:37.280483",
+            "input_features": {
+                "patient_id": "PT-5750",
+                "age": 25,
+                "fever_duration_days": 7,
+                "cough_duration_days": 40,
+                "weight_loss_kg": 5.0,
+                "night_sweats": 1,
+                "hemoptysis": 0
+            }
+        },
+        "ai_result": {
+            "risk_level": "HIGH",
+            "confidence": "77.13%",
+            "risk_score": 0.771,
+            "methodology": "Random Forest ML Model",
+            "reasoning": "ML pattern identification.",
+            "recommendation": "Refer for testing"
+        },
+        "blockchain_tx": "e8573be1b1d7a1a72066478674efd8d3e450812517aa850ce3a31d20572719cb",
+        "validation": {
+            "doctor_id": "DOC001",
+            "doctor_name": "Dr. Amina Nakasone",
+            "decision": "APPROVED",
+            "override_reason": null,
+            "signature": "f96a8a60e59f58c0b1c5e26a8db0ec3ad89a06973bc2d7a17525d09eaad8c32d",
+            "timestamp": "2026-03-29T12:13:46.974340",
+            "blockchain_tx": "8ebae8290c3541f105dd49cadbb4a945ba75c4e09c5659d54acc872f71ac46a7"
+        }
     }
 ]

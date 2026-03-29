@@ -79,12 +79,13 @@
 
         .form-group { margin-bottom: 15px; }
         label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; }
-        input, select {
+        input, select, textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid #cbd5e1;
             border-radius: 6px;
             box-sizing: border-box;
+            font-family: inherit;
         }
 
         button {
@@ -172,6 +173,8 @@
             font-size: 0.75rem;
             margin: 10px 0;
         }
+
+        #override-section { display: none; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -180,7 +183,7 @@
     <header>
         <div>
             <h1><i class="fa-solid fa-microscope"></i> MediFlow</h1>
-            <div class="subtitle">AI & Blockchain Clinical Integrity Dashboard</div>
+            <div class="subtitle">Clinical AI & Blockchain Integrity Dashboard</div>
         </div>
         <div id="ledger-status" class="status-badge status-offline">
             <i class="fas fa-circle"></i> LEDGER DISCONNECTED
@@ -188,6 +191,7 @@
     </header>
 
     <div class="dashboard-grid">
+        <!-- STEP 1: PATIENT TRIAGE -->
         <div class="card">
             <div class="card-header">
                 <i class="fa-solid fa-user-injured"></i> Patient Triage Station
@@ -237,11 +241,12 @@
             </div>
         </div>
 
+        <!-- STEP 2: DOCTOR VALIDATION -->
         <div id="doctor-portal" class="card">
             <div class="card-header">
                 <i class="fa-solid fa-user-md"></i> Physician Validation Station
             </div>
-            <p style="font-size: 0.85rem; color: #64748b;">Authorized doctors review AI output and authorize the ledger entry.</p>
+            <p style="font-size: 0.85rem; color: #64748b;">Review AI output and authorize the ledger entry.</p>
             
             <div class="form-group">
                 <label>Authorized Physician</label>
@@ -251,11 +256,18 @@
             </div>
             <div class="form-group">
                 <label>Clinical Decision</label>
-                <select id="doctor_decision">
+                <select id="doctor_decision" onchange="toggleOverrideReason()">
                     <option value="APPROVED">APPROVE AI Diagnosis</option>
                     <option value="OVERRIDDEN">OVERRIDE (Clinical Judgment)</option>
                 </select>
             </div>
+
+            <!-- DYNAMIC OVERRIDE REASON -->
+            <div id="override-section" class="form-group">
+                <label style="color: var(--danger);">Reason for Override</label>
+                <textarea id="override_reason" rows="3" placeholder="Explain why the AI diagnosis was changed..."></textarea>
+            </div>
+
             <button id="validate-btn" onclick="validateOnBackend()" style="background: var(--success);">
                 <i class="fa-solid fa-file-signature"></i> Sign & Authorize
             </button>
@@ -268,15 +280,16 @@
         </div>
     </div>
 
+    <!-- AUDIT SECTION -->
     <div class="card" style="grid-column: span 2;">
         <div class="card-header">
             <i class="fa-solid fa-receipt" style="color: var(--warning);"></i>
-            Immutable Audit Trail (Reversing the "Black Box")
+            Immutable Audit Trail (Accountability Verification)
         </div>
         <div style="display: flex; gap: 10px; margin-bottom: 20px;">
             <input type="text" id="audit_patient_id" placeholder="Enter Patient ID to audit..." style="flex-grow: 1;">
             <button onclick="fetchAuditTrail()" style="width: auto; padding: 0 30px; background: var(--warning);">
-                Run Accountability Audit
+                Run Verification
             </button>
         </div>
         <div id="audit-results" style="min-height: 100px;">
@@ -296,6 +309,12 @@
         setInterval(checkHealth, 5000);
     }
 
+    function toggleOverrideReason() {
+        const decision = document.getElementById('doctor_decision').value;
+        const section = document.getElementById('override-section');
+        section.style.display = (decision === 'OVERRIDDEN') ? 'block' : 'none';
+    }
+
     async function checkHealth() {
         try {
             const res = await fetch(`${API_BASE}/health`);
@@ -310,7 +329,7 @@
                 statusBox.className = "status-badge status-offline";
                 statusBox.innerHTML = `<i class="fas fa-circle"></i> LEDGER OFFLINE`;
             }
-        } catch (e) { console.error("Health check failed"); }
+        } catch (e) { }
     }
 
     async function loadDoctors() {
@@ -331,7 +350,7 @@
             document.getElementById('cough_duration_days').value = p.cough_duration_days;
             document.getElementById('hemoptysis').value = p.hemoptysis;
             log(`[EMR] Loaded records for ${p.patient_id}`);
-        } catch (e) { alert("Failed to fetch patient data."); }
+        } catch (e) { }
     }
 
     function log(msg) {
@@ -344,7 +363,7 @@
         e.preventDefault();
         const btn = document.getElementById('triage-btn');
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing Clinical Pattern...';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
 
         const data = {
             patient_id: document.getElementById('patient_id').value,
@@ -374,14 +393,21 @@
             document.getElementById('doctor-portal').classList.add('active');
             btn.disabled = false;
             btn.textContent = "Analyze Symptoms";
-            log(`[AI] Risk Level: ${result.risk_level}. Hash generated.`);
+            log(`[AI] Risk Level: ${result.risk_level}. Hash ready.`);
         } catch (err) { alert('Backend connection failed!'); btn.disabled = false; }
     });
 
     async function validateOnBackend() {
         const btn = document.getElementById('validate-btn');
+        const decision = document.getElementById('doctor_decision').value;
+        const reason = document.getElementById('override_reason').value;
+
+        if (decision === 'OVERRIDDEN' && !reason) {
+            return alert("Please provide a reason for overriding the AI diagnosis.");
+        }
+
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Writing to Ledger...';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Committing...';
 
         try {
             const validationData = {
@@ -389,7 +415,8 @@
                 doctor_name: "Physician",
                 ai_prediction_id: currentPrediction.ai_prediction_id,
                 ai_prediction_hash: currentPrediction.ai_prediction_hash,
-                decision: document.getElementById('doctor_decision').value
+                decision: decision,
+                override_reason: decision === 'OVERRIDDEN' ? reason : null
             };
 
             const response = await fetch(`${API_BASE}/api/v1/validate/`, {
@@ -403,16 +430,16 @@
                 document.getElementById('blockchain-section').style.display = 'block';
                 document.getElementById('tx-link').textContent = `TX: ${result.blockchain_tx}`;
                 btn.innerHTML = '<i class="fas fa-check"></i> Recorded';
-                log(`[Success] Decision committed to immutable ledger.`);
+                log(`[Success] Decision sealed on blockchain.`);
             }
-        } catch (err) { alert("Blockchain storage failed. Ensure Anvil is running."); btn.disabled = false; }
+        } catch (err) { alert("Ledger storage failed."); btn.disabled = false; }
     }
 
     async function fetchAuditTrail() {
         const pId = document.getElementById('audit_patient_id').value;
         const container = document.getElementById('audit-results');
         if (!pId) return alert("Enter Patient ID");
-        container.innerHTML = '<p style="text-align:center"><i class="fas fa-spinner fa-spin"></i> Retrieving & Verifying Records...</p>';
+        container.innerHTML = '<p style="text-align:center"><i class="fas fa-spinner fa-spin"></i> Verifying Trail...</p>';
 
         try {
             const res = await fetch(`${API_BASE}/api/v1/audit/${pId}`);
@@ -422,7 +449,7 @@
                 return;
             }
 
-            let html = `<div><strong>Accountability Report: ${data.total_transactions} Total Entry(s) Found</strong></div>`;
+            let html = `<div><strong>Verification Report: ${data.total_transactions} Total Entry(s) Found</strong></div>`;
             data.transactions.forEach(tx => {
                 html += `
                     <div class="audit-item">
@@ -446,14 +473,17 @@
                         </div>
 
                         <div style="font-size:0.7rem; font-family:monospace; background:#f1f5f9; padding:8px; border-radius:4px; word-break:break-all;">
-                            PROOF HASH: ${tx.ai_hash}
+                            CID PROOF: ${tx.ai_hash}
                         </div>
 
                         ${tx.validation ? `
-                        <div style="margin-top:10px; padding:10px; border-radius:6px; background:#dcfce7; border-left:4px solid var(--success);">
-                            <div style="font-size:0.7rem; font-weight:700; color:#166534;">DOCTOR AUTHORIZATION CONFIRMED</div>
-                            <div style="font-size:0.75rem;">Physician Decision: ${tx.validation.decision}</div>
-                            <div style="font-size:0.65rem; color:#15803d; font-family:monospace;">Ledger Addr: ${tx.validation.doctor_address}</div>
+                        <div style="margin-top:10px; padding:10px; border-radius:6px; background:${tx.validation.decision === 'OVERRIDDEN' ? '#fff7ed' : '#dcfce7'}; border-left:4px solid ${tx.validation.decision === 'OVERRIDDEN' ? 'var(--warning)' : 'var(--success)'};">
+                            <div style="font-size:0.7rem; font-weight:700; color:${tx.validation.decision === 'OVERRIDDEN' ? '#9a3412' : '#166534'};">
+                                PHYSICIAN AUTHORIZATION CONFIRMED
+                            </div>
+                            <div style="font-size:0.75rem;">Decision: ${tx.validation.decision}</div>
+                            ${tx.validation.override_reason ? `<div style="font-size:0.75rem; margin-top:5px; color:#9a3412;"><strong>Reason for Override:</strong> ${tx.validation.override_reason}</div>` : ''}
+                            <div style="font-size:0.65rem; color:#15803d; font-family:monospace; margin-top:5px;">Ledger Address: ${tx.validation.doctor_address || tx.validation.doctor_id}</div>
                         </div>
                         ` : ''}
                     </div>`;
